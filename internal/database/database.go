@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -16,7 +17,7 @@ type Database struct {
 }
 
 func Connect() *Database {
-	connectionString := "mongodb://mongodb:27017"
+	connectionString := os.Getenv("MONGO_URL")
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(connectionString))
 	if err != nil {
