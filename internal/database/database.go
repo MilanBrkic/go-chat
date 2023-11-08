@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
+	"go-chat/internal/config"
 	"log"
-	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -17,7 +17,7 @@ type Database struct {
 }
 
 func Connect() *Database {
-	connectionString := os.Getenv("MONGO_URL")
+	connectionString := config.MONGO_URL
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(connectionString))
 	if err != nil {

@@ -2,12 +2,12 @@ package server
 
 import (
 	"fmt"
+	"go-chat/internal/config"
 	"net/http"
-	"os"
 )
 
 func Listen() {
-	port := os.Getenv("PORT")
+	port := config.SERVER_PORT
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	//     w.Write([]byte("Hello, World!"))
 	// })

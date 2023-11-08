@@ -10,7 +10,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      PORT: 8080
+      SERVER_PORT: 8080
       MONGO_URL: "mongodb://mongodb:27017"
 
   mongodb:
