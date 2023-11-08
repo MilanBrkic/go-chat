@@ -24,8 +24,6 @@ func Connect() *Database {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("test")
-
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
