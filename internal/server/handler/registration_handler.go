@@ -49,10 +49,11 @@ func (handler *registrationHandler) handle(c *gin.Context) {
 		return
 	}
 
-	_, ok := handler.userDb.GetByUsername(body.Username)
+	_, exists := handler.userDb.GetByUsername(body.Username)
 
-	if ok {
+	if exists {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Username already exists", "username": body.Username})
+		return
 	}
 
 	handler.userDb.Insert(model.User{Username: body.Username, Password: body.Password})
