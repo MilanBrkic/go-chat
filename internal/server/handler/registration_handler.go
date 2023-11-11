@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type registration struct {
@@ -56,7 +57,25 @@ func (handler *registrationHandler) handle(c *gin.Context) {
 		return
 	}
 
-	handler.userDb.Insert(model.User{Username: body.Username, Password: body.Password})
+	hashedPassword, err := hashPassword(body.Password)
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error":   err,
+			"message": "Error while hashing password",
+		})
+		return
+	}
+
+	handler.userDb.Insert(model.User{Username: body.Username, Password: hashedPassword})
 
 	c.JSON(http.StatusOK, gin.H{"message": "User registered"})
+}
+
+func hashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
 }
