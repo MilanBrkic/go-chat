@@ -29,7 +29,13 @@ func (handler *registrationHandler) handle(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, body)
+	user, ok := handler.userDb.GetByUsername(body.Username)
+
+	if ok {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "User already exists", "username": body.Username})
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 func (handler *registrationHandler) isValid(c *gin.Context) (*registration, bool) {
