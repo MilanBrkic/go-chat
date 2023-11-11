@@ -20,6 +20,7 @@ func Listen(db *database.Database) {
 	r.Use(gin.Recovery())
 
 	r.POST("/register", handler.GetRegistrationHandler(db.User))
+	r.POST("/login", handler.GetLoginHandler(db.User))
 
 	go func() {
 		if err := r.Run(":" + port); err != nil {
