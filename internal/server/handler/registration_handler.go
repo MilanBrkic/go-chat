@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"go-chat/internal/database"
+	"go-chat/internal/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,22 +23,6 @@ func GetRegistrationHandler(userDb *database.UserDatabase) func(c *gin.Context) 
 	return (&registrationHandler{userDb: userDb}).handle
 }
 
-func (handler *registrationHandler) handle(c *gin.Context) {
-	body, ok := handler.isValid(c)
-
-	if !ok {
-		return
-	}
-
-	user, ok := handler.userDb.GetByUsername(body.Username)
-
-	if ok {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "User already exists", "username": body.Username})
-	}
-
-	c.JSON(http.StatusOK, user)
-}
-
 func (handler *registrationHandler) isValid(c *gin.Context) (*registration, bool) {
 	var jsonBody registration
 	var validate = validator.New()
@@ -55,4 +40,22 @@ func (handler *registrationHandler) isValid(c *gin.Context) (*registration, bool
 	}
 
 	return &jsonBody, true
+}
+
+func (handler *registrationHandler) handle(c *gin.Context) {
+	body, ok := handler.isValid(c)
+
+	if !ok {
+		return
+	}
+
+	_, ok := handler.userDb.GetByUsername(body.Username)
+
+	if ok {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Username already exists", "username": body.Username})
+	}
+
+	handler.userDb.Insert(model.User{Username: body.Username, Password: body.Password})
+
+	c.JSON(http.StatusOK, gin.H{"message": "User registered"})
 }

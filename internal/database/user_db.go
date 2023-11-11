@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"go-chat/internal/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,4 +26,12 @@ func (db *UserDatabase) GetByUsername(username string) (any, bool) {
 	}
 
 	return result, true
+}
+
+func (db *UserDatabase) Insert(user model.User) {
+	_, err := db.collection.InsertOne(context.TODO(), user)
+	if err != nil {
+		panic(fmt.Sprintf("Error inserting document: %s", err))
+	}
+
 }
