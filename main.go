@@ -8,8 +8,8 @@ import (
 
 func main() {
 	util.ReadEnvs()
-	database.Connect()
-	server.Listen()
+	db := database.Connect()
+	server.Listen(db)
 
 	select {}
 }

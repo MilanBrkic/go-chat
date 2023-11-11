@@ -2,19 +2,28 @@ package handler
 
 import (
 	"fmt"
+	"go-chat/internal/database"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
-type Registration struct {
+type registration struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
-func HandleRegistration(c *gin.Context) {
-	body, ok := isValid(c)
+type registrationHandler struct {
+	userDb *database.UserDatabase
+}
+
+func GetRegistrationHandler(userDb *database.UserDatabase) func(c *gin.Context) {
+	return (&registrationHandler{userDb: userDb}).handle
+}
+
+func (handler *registrationHandler) handle(c *gin.Context) {
+	body, ok := handler.isValid(c)
 
 	if !ok {
 		return
@@ -23,8 +32,8 @@ func HandleRegistration(c *gin.Context) {
 	c.JSON(http.StatusOK, body)
 }
 
-func isValid(c *gin.Context) (*Registration, bool) {
-	var jsonBody Registration
+func (handler *registrationHandler) isValid(c *gin.Context) (*registration, bool) {
+	var jsonBody registration
 	var validate = validator.New()
 
 	if err := c.ShouldBindJSON(&jsonBody); err != nil {
