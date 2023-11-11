@@ -1,13 +1,12 @@
 package login
 
 import (
-	"fmt"
 	"go-chat/internal/database"
 	"go-chat/internal/server/handler_validator"
+	"go-chat/internal/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type body struct {
@@ -33,7 +32,7 @@ func (h *LoginHandler) Handle(c *gin.Context) {
 		return
 	}
 
-	ok = compareHash(body.Password, user.Password)
+	ok = util.CompareHash(body.Password, user.Password)
 
 	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Password incorrect"})
@@ -41,15 +40,4 @@ func (h *LoginHandler) Handle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User logged in"})
-}
-
-func compareHash(enteredPassword string, storedHash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(enteredPassword))
-	if err == nil {
-		return true
-	} else if err == bcrypt.ErrMismatchedHashAndPassword {
-		return false
-	} else {
-		panic(fmt.Sprintf("Error: %s", err))
-	}
 }
