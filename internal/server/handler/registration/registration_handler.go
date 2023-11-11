@@ -1,17 +1,16 @@
 package registration
 
 import (
-	"fmt"
 	"go-chat/internal/database"
 	"go-chat/internal/model"
+	"go-chat/internal/server/handler_validator"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type registrationBody struct {
+type body struct {
 	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
@@ -20,27 +19,8 @@ type RegistrationHandler struct {
 	UserDb *database.UserDatabase
 }
 
-func (handler *RegistrationHandler) isValid(c *gin.Context) (*registrationBody, bool) {
-	var jsonBody registrationBody
-	var validate = validator.New()
-
-	if err := c.ShouldBindJSON(&jsonBody); err != nil {
-		fmt.Println("JSONUnmarshalMiddleware error", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
-		c.Abort()
-		return nil, false
-	}
-
-	if err := validate.Struct(jsonBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return nil, false
-	}
-
-	return &jsonBody, true
-}
-
 func (handler *RegistrationHandler) Handle(c *gin.Context) {
-	body, ok := handler.isValid(c)
+	body, ok := handler_validator.IsValid[body](c)
 
 	if !ok {
 		return
