@@ -9,11 +9,12 @@ import (
 
 func ReadEnvs() {
 	file, err := os.Open("local.env")
+	defer file.Close()
+
 	if err != nil {
 		fmt.Println("Reading from docker", err)
 		return
 	}
-	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {

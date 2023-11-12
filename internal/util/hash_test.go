@@ -1,6 +1,8 @@
 package util
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestHashPassword(t *testing.T) {
 	password := "milan"
