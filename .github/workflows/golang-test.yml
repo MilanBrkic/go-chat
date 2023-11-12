@@ -28,4 +28,4 @@ jobs:
             -v ${{ github.workspace }}:/app \
             -w /app \
             go-chat \
-            go test -v ./internal/*
+            go test -v -cover ./internal/*
