@@ -14,11 +14,6 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-type Message struct {
-	Id string `json:"id"`
-	// add other fields as needed
-}
-
 func webSocketHandler(w http.ResponseWriter, r *http.Request, connections map[string]*websocket.Conn) {
 	defer r.Body.Close()
 
