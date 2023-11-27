@@ -9,7 +9,8 @@ import (
 func main() {
 	util.ReadEnvs()
 	db := database.Connect()
-	server.Listen(db)
+	server.RestServerListen(db)
+	server.SocketServerListen()
 
 	select {}
 }

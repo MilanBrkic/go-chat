@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Listen(db *database.Database) {
+func RestServerListen(db *database.Database) {
 	port := config.SERVER_PORT
 
 	r := gin.Default()

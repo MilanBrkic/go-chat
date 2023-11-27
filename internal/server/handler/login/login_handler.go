@@ -39,5 +39,5 @@ func (h *LoginHandler) Handle(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User logged in"})
+	c.JSON(http.StatusOK, user)
 }
