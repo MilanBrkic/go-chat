@@ -14,10 +14,26 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+// Message represents the structure of a WebSocket message
+type Message struct {
+	Type    string `json:"type"`
+	Payload any    `json:"payload"`
+}
+
+func handleChatMessage(conn *websocket.Conn, msg Message) {
+	// Handle your chat messages here
+	// You can switch on msg.Type and perform different actions based on the type
+	fmt.Printf("Received chat message: %s\n", msg.Payload)
+}
+
 func webSocketHandler(w http.ResponseWriter, r *http.Request, connections map[string]*websocket.Conn) {
 	defer r.Body.Close()
 
 	id := r.Header.Get("X-Client-ID")
+	if id == "" {
+		fmt.Println("Received socket connection but no id received")
+		return
+	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -27,6 +43,24 @@ func webSocketHandler(w http.ResponseWriter, r *http.Request, connections map[st
 
 	connections[id] = conn
 	fmt.Printf("Client with ID %s connected\n", id)
+
+	// Read and handle incoming messages
+	for {
+		var msg Message
+		err := conn.ReadJSON(&msg)
+		if err != nil {
+			log.Println("Error reading message:", err)
+			delete(connections, id) // Remove the connection on error
+			break
+		}
+
+		switch msg.Type {
+		case "chat":
+			handleChatMessage(conn, msg)
+		default:
+			fmt.Printf("Unknown message type: %s\n", msg.Type)
+		}
+	}
 }
 
 func SocketServerListen() {
