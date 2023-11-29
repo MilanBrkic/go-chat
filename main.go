@@ -10,7 +10,7 @@ func main() {
 	util.ReadEnvs()
 	db := database.Connect()
 	server.RestServerListen(db)
-	server.SocketServerListen()
+	server.SocketServerListen(db)
 
 	select {}
 }
